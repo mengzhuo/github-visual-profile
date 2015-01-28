@@ -62,15 +62,19 @@ def main():
                         default="default.tpl")
     
     args = parser.parse_args()
-    
-    with open(args.input) as tpl_file:
-        tpl = Template(tpl_file.read())
-        data = json.dumps(generate_data(get_repo_list(args.username)))
 
-        with open(args.output, "wb") as of:
-            of.write(tpl.substitute(username=args.username,
-                                    data=data,
-                                    generate_time=datetime.datetime.utcnow().isoformat()))
+    data = json.dumps(generate_data(get_repo_list(args.username)))
+
+    if args.input.lower().startswith("http"):
+        tpl = Template(requests.get(args.input).content) 
+    else:
+        with open(args.input) as tpl_file:
+            tpl = Template(tpl_file.read())
+
+    with open(args.output, "wb") as of:
+        of.write(tpl.substitute(username=args.username,
+                                data=data,
+                                generate_time=datetime.datetime.utcnow().isoformat()))
        
 if __name__ == '__main__':
     main()

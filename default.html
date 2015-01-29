@@ -31,6 +31,8 @@
                        .size([diameter,diameter])
                        .value(function(d) {return d.size;})
                        .padding(5);
+        language_group = [];
+
         function processData(data){
 
             var newSet = [];
@@ -38,29 +40,34 @@
                 repo = data[i]
                 newSet.push({name:repo.name, className:repo.language, size: Math.max(repo.impact, 0),
                              url:repo.html_url})
+                if (language_group.indexOf(repo.language) == -1 ){
+                    language_group.push(repo.language);
+                }
             }
             return {children: newSet};
-        }
+          }
+
           nodes = bubble.nodes(processData(profile))
                     .filter(function(d){return !d.children});
 
-          console.log("nodes", nodes) 
+          console.log("nodes", nodes)
+
           g = svg.selectAll("a").data(nodes).enter()
                    .append('a')
                    .attr("transform", function(d){return 'translate(' + d.x + ',' + d.y + ')';})
                    .attr("xlink:href", function(d){return d.url})
 
-           g.append("svg:title")
+          g.append("svg:title")
                    .text(function(d){ return d.name;})
                                             
 
-           cir = g.append("circle")
+          cir = g.append("circle")
                     .attr('r', function(d) { return d.r; })
                     .attr('class', function(d) { return d.className; })
                     .attr("fill", function(d) { return colorGen(d.className);})
 
                     
-                    g.append("text")
+          g.append("text")
                     .attr("text-anchor", "middle")
                     .attr("dy", ".3em")
                     .attr("fill", "#fff")

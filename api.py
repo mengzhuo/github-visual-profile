@@ -72,7 +72,7 @@ def main():
             tpl = Template(tpl_file.read())
 
     with open(args.output, "wb") as of:
-        of.write(tpl.substitute(username=args.username,
+        of.write(tpl.substitute(username=args.username.title(),
                                 data=data,
                                 generate_time=datetime.datetime.utcnow().isoformat()))
        

@@ -7,6 +7,7 @@
         <meta name="time" content="2015-01-28T12:39:52.264029">
         <title>mengzhuo Profile</title>
         <style type="text/css">
+            body {padding:0;margin:0;text-align:right;}
             text {font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;}
             a {opacity:0.8; }
             a:hover{
@@ -20,18 +21,20 @@
         <script src="/d3.v3.min.js" type="text/javascript" charset="utf-8"></script>
         <script>
         window.onload = function(){
-        var diameter = 960,
+        w = window.innerWidth
+        h = window.innerHeight - 20
+        diameter = Math.min(w, h),
             colorGen = d3.scale.category20c(); 
         svg = d3.select("body").append('svg')
-                    .attr("width", diameter)
-                    .attr("height", diameter);
+                    .attr("width", w-80)
+                    .attr("height", h);
 
         console.log("svg", svg);
         bubble = d3.layout.pack()
-                       .size([diameter,diameter])
+                       .size([w,h])
                        .value(function(d) {return d.size;})
                        .padding(5);
-        language_group = [];
+        language_group = {};
 
         function processData(data){
 
@@ -42,15 +45,45 @@
                              url:repo.html_url})
                 var name = repo.language == null?"Unknown":repo.language;
                 
-                if (language_group.indexOf(name) == -1){
-
-                    language_group.push(name);
+                if (language_group[name] == undefined){
+                    language_group[name] = 1;
+                } else {
+                    language_group[name] += 1;
                 }
             }
             return {children: newSet};
           }
+          dd = processData(profile); 
+          ld = [];
+          for (var l in language_group){
+              ld.push({"lable":l, "value":language_group[l]});
+          }
+          ld = ld.sort(function(a,b){return b.value-a.value});
+            
+          var y = d3.scale.linear()
+                    .domain([0, ld[0].value])
+                    .range([36,h/2])
+              x = d3.scale.ordinal()
+                    .domain(d3.range(ld.length))
+                    .rangeBands([0, ld.length])
 
-          nodes = bubble.nodes(processData(profile))
+          bar = svg.selectAll("g")
+                        .data(ld)
+                        .enter().append("g")
+                        .attr("transform",function(d, i ){return "translate("+ (w-(x(i)+5)*24) +",0)" })
+                        .attr("height", function(d){console.log(d);return y(d.value)+"px";})
+                        .attr("width", "24px")
+          bar.append("rect")
+                        .attr("height", function(d){console.log(d);return y(d.value)+"px";})
+                        .attr("width", "24px")
+                        .attr("fill", function(d){return colorGen(d.lable)})
+          bar.append("text").attr("fill","#fff")
+                    .text(function(d){return d.lable})
+                    .attr("transform", "rotate(90)")
+                    .attr("dy", "-0.3em")
+                    .attr("dx", "0.3em")
+
+          nodes = bubble.nodes(dd)
                     .filter(function(d){return !d.children});
 
           console.log("nodes", nodes)

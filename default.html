@@ -40,8 +40,11 @@
                 repo = data[i]
                 newSet.push({name:repo.name, className:repo.language, size: Math.max(repo.impact, 0),
                              url:repo.html_url})
-                if (language_group.indexOf(repo.language) == -1 ){
-                    language_group.push(repo.language);
+                var name = repo.language == null?"Unknown":repo.language;
+                
+                if (language_group.indexOf(name) == -1){
+
+                    language_group.push(name);
                 }
             }
             return {children: newSet};

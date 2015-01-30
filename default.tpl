@@ -5,14 +5,12 @@
         <meta name="viewport" content="width=device-width" />
         <meta name="generator" content="Github Profiler 0.1-beta">
         <meta name="time" content="$generate_time">
-        <title>$username Profile</title>
+        <title>$username 's Profile</title>
         <style type="text/css">
             body {padding:0;margin:0;text-align:right;}
             text {font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;}
-            a {opacity:0.8; }
             a:hover{
                     filter: url(#drop-shadow);
-                    opacity:1;
                    }
         </style>
         <script type="text/javascript" charset="utf-8">
@@ -73,10 +71,14 @@
                         .attr("transform",function(d, i ){return "translate("+ (w-(x(i)+5)*24) +",0)" })
                         .attr("height", function(d){console.log(d);return y(d.value)+"px";})
                         .attr("width", "24px")
-          bar.append("rect")
-                        .attr("height", function(d){console.log(d);return y(d.value)+"px";})
+          rect = bar.append("rect")
+                        .attr("height", 0)
                         .attr("width", "24px")
-                        .attr("fill", function(d){return colorGen(d.lable)})
+          rect.transition()
+                 .duration(500)
+                 .delay(300)
+                 .attr("height", function(d){console.log(d);return y(d.value)+"px";})
+                 .attr("fill", function(d){return colorGen(d.lable)})
           bar.append("text").attr("fill","#fff")
                     .text(function(d){return d.lable})
                     .attr("transform", "rotate(90)")
@@ -90,17 +92,28 @@
 
           g = svg.selectAll("a").data(nodes).enter()
                    .append('a')
-                   .attr("transform", function(d){return 'translate(' + d.x + ',' + d.y + ')';})
                    .attr("xlink:href", function(d){return d.url})
+                    .attr("transform", function(d){return 'translate('+w/2+','+h/2+')';})
+
+          g.transition()
+                    .delay(function(d, i){return i*7;})
+                    .duration(500) 
+                    .attr("transform", function(d){return 'translate(' + d.x + ',' + d.y + ')';})
 
           g.append("svg:title")
                    .text(function(d){ return d.name;})
                                             
 
           cir = g.append("circle")
-                    .attr('r', function(d) { return d.r; })
                     .attr('class', function(d) { return d.className; })
-                    .attr("fill", function(d) { return colorGen(d.className);})
+                     .attr("fill", "#fff")
+                     .attr("r", 0)
+
+           cir.transition()
+          .delay(function(d, i){return i*7;})
+             .attr('r', function(d) { return d.r; })
+             .duration(500)
+             .attr("fill", function(d) { return colorGen(d.className);})
 
                     
           g.append("text")

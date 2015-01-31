@@ -52,7 +52,7 @@ def generate_data(repo_list=None):
 
 def main():
 
-    parser = argparse.ArgumentParser(version="Github Profile 0.1-beta")
+    parser = argparse.ArgumentParser(version="Github Visual Profile 0.1-alpha")
     parser.add_argument("-u", action="store", dest="username", const="mengzhuo",
                         help="Your Github Account Name", nargs="?", default="mengzhuo")
     parser.add_argument("-o", action="store", dest="output", const="index.html",

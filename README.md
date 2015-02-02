@@ -8,6 +8,13 @@ Generate Github Visual Profile
 python gen_profile.py -u [your github username] -i [template path] -o [out file path]
 ```
 
+## Dependency
+* requests
+```
+pip install requests
+```
+
+
 ## Help
 ```
 usage: gen_profile.py [-h] [-v] [-u [USERNAME]] [-o [OUTPUT]] [-i [INPUT]]
